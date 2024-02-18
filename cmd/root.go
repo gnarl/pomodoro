@@ -23,10 +23,7 @@ func Execute() {
 
 func init() {
 
-	// Local flag definitions
-	rootCmd.Flags().BoolP("log", "l", false, "A boolean flag with shortcut 'l'")
-	rootCmd.Flags().Bool("mog", false, "A boolean flag without a shortcut")
-
 	// Add subcommands to rootCmd
 	rootCmd.AddCommand(NewStartCmd())
+	rootCmd.AddCommand(NewListCmd())
 }

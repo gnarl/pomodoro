@@ -20,14 +20,14 @@ func NewStartCmd() *cobra.Command {
 
 	// Local flag definitions
 	startCmd.Flags().IntP("duration", "d", 35, "The duration the timer runs in minutes")
-	startCmd.Flags().StringP("name", "n", "", "The name of the timer")
-	startCmd.Flags().StringP("message", "m", "Done!", "The action to perform when the timer ends")
+	startCmd.Flags().StringP("task", "t", "", "The name of the task")
+	startCmd.Flags().StringP("message", "m", "Done!", "A message to display when the timer is done")
 
 	return startCmd
 }
 
 func runStartCmd(cmd *cobra.Command, args []string) {
-	timer := writeTimer(cmd)
+	timer := persistTimer(cmd)
 	seconds := timer.Duration * 60
 
 	fmt.Print("0 ")
@@ -40,20 +40,20 @@ func runStartCmd(cmd *cobra.Command, args []string) {
 	}
 	fmt.Println("")
 
-	sendNotification(timer.Message, timer.Name)
+	sendNotification(timer.Message, timer.Task)
 }
 
-func writeTimer(cmd *cobra.Command) *data.Timer {
+func persistTimer(cmd *cobra.Command) *data.Timer {
 	minutes, _ := cmd.Flags().GetInt("duration")
 	message, _ := cmd.Flags().GetString("message")
-	name, _ := cmd.Flags().GetString("name")
-	timer := data.NewTimer(name, minutes, message)
+	task, _ := cmd.Flags().GetString("task")
+	timer := data.NewTimer(task, minutes, message)
 	data.AppendTimer(timer)
 	return &timer
 }
 
-func sendNotification(message, name string) {
-	terminalNotifier := fmt.Sprintf("terminal-notifier -message \"%s\" -sound Glass -title \"%s\"", message, name)
+func sendNotification(message, task string) {
+	terminalNotifier := fmt.Sprintf("terminal-notifier -message \"%s\" -sound Glass -title \"%s\"", message, task)
 	notifyCmd := exec.Command("sh", "-c", terminalNotifier)
 	err := notifyCmd.Run()
 	if err != nil {

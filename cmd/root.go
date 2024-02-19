@@ -25,5 +25,5 @@ func init() {
 
 	// Add subcommands to rootCmd
 	rootCmd.AddCommand(NewStartCmd())
-	rootCmd.AddCommand(NewListCmd())
+	rootCmd.AddCommand(NewShowCmd())
 }

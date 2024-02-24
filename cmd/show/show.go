@@ -55,8 +55,6 @@ func showTimers() {
 
 func showFavorites() {
 	// TODO: sort favorites
-	log := utils.GetLogger()
-
 	favorites := data.ReadFavorites()
 	for _, favorite := range favorites {
 		f, err := json.MarshalIndent(favorite, "", " ")

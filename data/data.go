@@ -2,48 +2,25 @@ package data
 
 import (
 	"encoding/json"
+	"errors"
 	"os"
-	"time"
 )
 
-var timerHistoryFileName = ".pomodoro_history.json"
-var favoritesFileName = ".pomodoro_history.json"
+const timerHistoryFileName = ".pomodoro_history.json"
+const favoritesFileName = ".pomodoro_favorites.json"
 
-type Timer struct {
-	Task      string `json:"task"`
-	Duration  int    `json:"duration"`
-	Message   string `json:"message"`
-	StartTime string `json:"start_time"`
-}
+func fileExists(filePath string) (bool, error) {
 
-type FavoriteTimer struct {
-	Id    int    `json:"id"`
-	Name  string `json:"name"`
-	Timer Timer  `json:"timer"`
-}
-
-func NewTimer(task string, duration int, message string) Timer {
-
-	startTime := time.Now().Format(time.RFC3339)
-
-	return Timer{
-		Task:      task,
-		Duration:  duration,
-		Message:   message,
-		StartTime: startTime,
+	if _, err := os.Stat(filePath); err == nil {
+		return true, nil
+	} else if errors.Is(err, os.ErrNotExist) {
+		return false, nil
+	} else {
+		return false, err
 	}
 }
 
-func NewFavoriteTimer(id int, name string, timer Timer) FavoriteTimer {
-
-	return FavoriteTimer{
-		Id:    id,
-		Name:  name,
-		Timer: timer,
-	}
-}
-
-func AppendTimer(timer Timer) {
+func AppendTimer(timer *Timer) {
 
 	file, err := os.OpenFile(timerHistoryFileName, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0644)
 	if err != nil {
@@ -59,6 +36,14 @@ func AppendTimer(timer Timer) {
 }
 
 func ReadTimers() []Timer {
+
+	exists, err := fileExists(timerHistoryFileName)
+	if err != nil {
+		panic(err)
+	}
+	if !exists {
+		return []Timer{}
+	}
 
 	file, err := os.OpenFile(timerHistoryFileName, os.O_RDONLY, 0644)
 	if err != nil {
@@ -89,13 +74,24 @@ func WriteFavorites(favorites []FavoriteTimer) {
 	defer file.Close()
 
 	encoder := json.NewEncoder(file)
-	err = encoder.Encode(favorites)
-	if err != nil {
-		panic(err)
+
+	for _, fav := range favorites {
+		err = encoder.Encode(fav)
+		if err != nil {
+			panic(err)
+		}
 	}
 }
 
 func ReadFavorites() []FavoriteTimer {
+
+	exists, err := fileExists(favoritesFileName)
+	if err != nil {
+		panic(err)
+	}
+	if !exists {
+		return []FavoriteTimer{}
+	}
 
 	file, err := os.OpenFile(favoritesFileName, os.O_RDONLY, 0644)
 	if err != nil {

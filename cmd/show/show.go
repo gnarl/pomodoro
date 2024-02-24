@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/gnarl/pomodoro/data"
+	"github.com/gnarl/pomodoro/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -26,6 +27,8 @@ func runShowCmd(cmd *cobra.Command, args []string) {
 
 	favorites, _ := cmd.Flags().GetBool("favorites")
 	recent, _ := cmd.Flags().GetBool("recent")
+	log := utils.GetLogger()
+	log.Debug("runShowCmd: ", "favorites", favorites, " recent: ", recent)
 
 	if !favorites {
 		showTimers()
@@ -52,6 +55,8 @@ func showTimers() {
 
 func showFavorites() {
 	// TODO: sort favorites
+	log := utils.GetLogger()
+
 	favorites := data.ReadFavorites()
 	for _, favorite := range favorites {
 		f, err := json.MarshalIndent(favorite, "", " ")

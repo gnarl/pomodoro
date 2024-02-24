@@ -3,6 +3,7 @@ package cmd
 import (
 	"os"
 
+	"github.com/gnarl/pomodoro/cmd/add"
 	"github.com/gnarl/pomodoro/cmd/show"
 	"github.com/gnarl/pomodoro/cmd/start"
 	"github.com/spf13/cobra"
@@ -28,4 +29,5 @@ func init() {
 	// Add subcommands to rootCmd
 	rootCmd.AddCommand(start.NewStartCmd())
 	rootCmd.AddCommand(show.NewShowCmd())
+	rootCmd.AddCommand(add.NewAddCmd())
 }

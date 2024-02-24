@@ -14,14 +14,10 @@ func NewStartCmd() *cobra.Command {
 	startCmd := &cobra.Command{
 		Use:   "start",
 		Short: "Start a new timer",
-		Long:  `Start a new timer. You can specify the duration, name, and action.`,
 		Run:   runStartCmd,
 	}
 
-	// Local flag definitions
-	startCmd.Flags().IntP("duration", "d", 35, "The duration the timer runs in minutes")
-	startCmd.Flags().StringP("task", "t", "", "The name of the task")
-	startCmd.Flags().StringP("message", "m", "Done!", "A message to display when the timer is done")
+	data.SetTimerCmdFlags(startCmd)
 
 	return startCmd
 }
@@ -44,12 +40,9 @@ func runStartCmd(cmd *cobra.Command, args []string) {
 }
 
 func persistTimer(cmd *cobra.Command) *data.Timer {
-	minutes, _ := cmd.Flags().GetInt("duration")
-	message, _ := cmd.Flags().GetString("message")
-	task, _ := cmd.Flags().GetString("task")
-	timer := data.NewTimer(task, minutes, message)
+	timer := data.GetTimerFromFlags(cmd)
 	data.AppendTimer(timer)
-	return &timer
+	return timer
 }
 
 func sendNotification(message, task string) {

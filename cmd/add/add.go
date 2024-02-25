@@ -1,9 +1,11 @@
 package add
 
 import (
-	"github.com/gnarl/pomodoro/data"
-	"github.com/gnarl/pomodoro/utils"
+	"github.com/gnarl/pomodoro/cmd/common"
+	"github.com/gnarl/pomodoro/internal/data"
 	"github.com/spf13/cobra"
+
+	log "github.com/gnarl/pomodoro/internal/utils"
 )
 
 func NewAddCmd() *cobra.Command {
@@ -14,7 +16,7 @@ func NewAddCmd() *cobra.Command {
 		Run:   runAddCmd,
 	}
 
-	data.SetTimerCmdFlags(addCmd)
+	common.SetTimerCmdFlags(addCmd)
 	addCmd.Flags().StringP("name", "n", "", "The name of the favorite")
 	addCmd.MarkFlagRequired("name")
 
@@ -23,9 +25,8 @@ func NewAddCmd() *cobra.Command {
 
 func runAddCmd(cmd *cobra.Command, args []string) {
 
-	favoriteTimer := data.GetFavoriteTimerFromFlags(cmd)
-	log := utils.GetLogger()
-	log.Debug("Adding favorite timer: ", "favoriteTimer", favoriteTimer)
+	favoriteTimer := common.GetFavoriteTimerFromFlags(cmd)
+	log.Logger.Debug("Adding favorite timer: ", "favoriteTimer", favoriteTimer)
 
 	currentFavorites := data.ReadFavorites()
 	currentFavorites = append(currentFavorites, *favoriteTimer)

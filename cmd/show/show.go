@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/gnarl/pomodoro/data"
-	"github.com/gnarl/pomodoro/utils"
+	"github.com/gnarl/pomodoro/internal/data"
+	log "github.com/gnarl/pomodoro/internal/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -27,8 +27,7 @@ func runShowCmd(cmd *cobra.Command, args []string) {
 
 	favorites, _ := cmd.Flags().GetBool("favorites")
 	recent, _ := cmd.Flags().GetBool("recent")
-	log := utils.GetLogger()
-	log.Debug("runShowCmd: ", "favorites", favorites, " recent: ", recent)
+	log.Logger.Debug("runShowCmd: ", "favorites", favorites, " recent: ", recent)
 
 	if !favorites {
 		showTimers()

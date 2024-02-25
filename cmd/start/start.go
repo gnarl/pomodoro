@@ -5,7 +5,8 @@ import (
 	"os/exec"
 	"time"
 
-	"github.com/gnarl/pomodoro/data"
+	"github.com/gnarl/pomodoro/cmd/common"
+	"github.com/gnarl/pomodoro/internal/data"
 	"github.com/spf13/cobra"
 )
 
@@ -17,13 +18,16 @@ func NewStartCmd() *cobra.Command {
 		Run:   runStartCmd,
 	}
 
-	data.SetTimerCmdFlags(startCmd)
+	common.SetTimerCmdFlags(startCmd)
 
 	return startCmd
 }
 
 func runStartCmd(cmd *cobra.Command, args []string) {
-	timer := persistTimer(cmd)
+
+	timer := common.GetTimerFromFlags(cmd)
+	data.AppendTimer(timer)
+
 	seconds := timer.Duration * 60
 
 	fmt.Print("0 ")
@@ -37,12 +41,6 @@ func runStartCmd(cmd *cobra.Command, args []string) {
 	fmt.Println("")
 
 	sendNotification(timer.Message, timer.Task)
-}
-
-func persistTimer(cmd *cobra.Command) *data.Timer {
-	timer := data.GetTimerFromFlags(cmd)
-	data.AppendTimer(timer)
-	return timer
 }
 
 func sendNotification(message, task string) {
